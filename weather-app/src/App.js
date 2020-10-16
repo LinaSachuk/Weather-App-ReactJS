@@ -1,4 +1,17 @@
 import React, { useState } from 'react';
+import axios from "axios";
+
+// https://rapidapi.com/HealThruWords/api/universal-inspirational-quotes/endpoints
+const options = {
+  method: 'GET',
+  url: 'https://rapidapi.p.rapidapi.com/v1/quotes/',
+  params: { maxR: '1', size: 'medium' },
+  headers: {
+    'x-rapidapi-host': 'healthruwords.p.rapidapi.com',
+    'x-rapidapi-key': '5a8ea71761msh2e12845540e03c1p1bacdfjsn766f6824866c'
+  }
+};
+
 
 // https://openweathermap.org/appid
 const api = {
@@ -10,6 +23,8 @@ function App() {
 
   const [query, setQuery] = useState('');
   const [weather, setWeather] = useState({});
+  const [quote, setQuote] = useState({});
+
 
   const search = evt => {
     if (evt.key === "Enter") {
@@ -20,8 +35,18 @@ function App() {
           setQuery('');
           console.log(result);
         });
+
+
+      axios.request(options).then(function (response) {
+        setQuote(response.data[0])
+        console.log(response.data);
+      }).catch(function (error) {
+        console.error(error);
+      });
+
     }
   }
+
 
 
   const dateBuilder = (d) => {
@@ -56,6 +81,7 @@ function App() {
         {(typeof weather.main != "undefined") ? (
           <div>
 
+
             <div className="location-box">
               <div className="location">{weather.name}, {weather.sys.country}</div>
               <div className="date">{dateBuilder(new Date())}</div>
@@ -66,6 +92,11 @@ function App() {
               </div>
               <div className="weather">
                 {weather.weather[0].main}
+              </div>
+            </div>
+            <div className="quote-box">
+              <div className="quote">
+                <img src={quote.media} alt="image" />
               </div>
             </div>
           </div>
